@@ -38,21 +38,82 @@
  *   // => { name: "Jadeja", strikeRate: 175, economy: 7.5, battingAvg: 28.57, isAllRounder: false }
  */
 export const calcStrikeRate = (runs, balls) => {
-  // Your code here
+  if (
+    typeof runs === "number" &&
+    typeof balls === "number" &&
+    Number.isInteger(runs) &&
+    Number.isInteger(balls) &&
+    runs >= 0 &&
+    balls > 0
+  ) {
+    return Math.round((runs / balls) * 10000) / 100;
+  }
+  return 0;
 };
 
 export const calcEconomy = (runsConceded, overs) => {
-  // Your code here
+  if (
+    typeof runsConceded === "number" &&
+    typeof overs === "number" &&
+    Number.isInteger(runsConceded) &&
+    Number.isInteger(overs) &&
+    runsConceded >= 0 &&
+    overs > 0
+  ) {
+    return Math.round((runsConceded / overs) * 100) / 100;
+  }
+  return 0;
 };
 
 export const calcBattingAvg = (totalRuns, innings, notOuts = 0) => {
-  // Your code here
+  if (
+    typeof totalRuns === "number" &&
+    typeof innings === "number" &&
+    Number.isInteger(totalRuns) &&
+    Number.isInteger(innings) &&
+    totalRuns >= 0 &&
+    innings > notOuts &&
+    typeof notOuts === "number" &&
+    Number.isInteger(notOuts) &&
+    notOuts >= 0
+  ) {
+    return Math.round((totalRuns / (innings - notOuts)) * 100) / 100;
+  }
+  return 0;
 };
 
 export const isAllRounder = (battingAvg, economy) => {
-  // Your code here
+  if (
+    typeof battingAvg === "number" &&
+    typeof economy === "number" &&
+    Number.isFinite(battingAvg) &&
+    Number.isFinite(economy) &&
+    battingAvg > 30 &&
+    economy < 8
+  ) {
+    return true;
+  }
+  return false;
 };
 
 export const getPlayerCard = (player) => {
-  // Your code here
+  if (!player || !player.name) return null;
+  let name = player.name;
+  let strikeRate = calcStrikeRate(player.runs, player.balls);
+  let economy = calcEconomy(player.runsConceded, player.overs);
+  let battingAvg = calcBattingAvg(
+    player.totalRuns,
+    player.innings,
+    player.notOuts ?? 0,
+  );
+  let isAllRounderBool = isAllRounder(battingAvg, economy);
+  {
+    return {
+      name,
+      strikeRate,
+      economy,
+      battingAvg,
+      isAllRounder: isAllRounderBool,
+    };
+  }
 };

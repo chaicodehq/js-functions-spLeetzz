@@ -49,5 +49,51 @@
  *   // => { name: "Ram", area: "Dadar", total: 2, completed: 1, pending: 1, successRate: "50.00%" }
  */
 export function createDabbawala(name, area) {
-  // Your code here
+  let dabbeWala = {};
+  if (typeof name === "string" && name && typeof area === "string" && area) {
+    let ids = [];
+    dabbeWala["addDelivery"] = (from, to) => {
+      if (from && to) {
+        ids.push({ id: ids.length + 1, from, to, status: "pending" });
+        return ids.length;
+      }
+      return -1;
+    };
+
+    dabbeWala["completeDelivery"] = (id) => {
+      if (typeof id === "number" && Number.isInteger(id) && id > 0) {
+        let del = ids.find((e) => e["id"] === id && e["status"] === "pending");
+        if (del) {
+          del["status"] = "completed";
+          return true;
+        }
+      }
+      return false;
+    };
+
+    dabbeWala["getActiveDeliveries"] = () =>
+      ids.filter((e) => e["status"] === "pending");
+
+    dabbeWala["getStats"] = () => {
+      let pending = dabbeWala.getActiveDeliveries().length;
+      let total = ids.length;
+      let completed = total - pending;
+      return {
+        name,
+        area,
+        total,
+        completed,
+        pending,
+        successRate: total
+          ? ((completed / total) * 100).toFixed(2) + "%"
+          : "0.00%",
+      };
+    };
+
+    dabbeWala["reset"] = () => {
+      ids = [];
+      return true;
+    };
+  }
+  return dabbeWala;
 }

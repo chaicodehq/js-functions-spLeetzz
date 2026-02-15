@@ -54,21 +54,47 @@
  *   // red and blue objects are UNCHANGED
  */
 export function mixColors(color1, color2) {
-  // Your code here
+  if (!color1 || !color2) return null;
+  return {
+    name: `${color1["name"]}-${color2["name"]}`,
+    r: Math.min(255, Math.round((color1["r"] + color2["r"]) / 2)),
+    g: Math.min(255, Math.round((color1["g"] + color2["g"]) / 2)),
+    b: Math.min(255, Math.round((color1["b"] + color2["b"]) / 2)),
+  };
 }
 
 export function adjustBrightness(color, factor) {
-  // Your code here
+  if (!color || typeof factor !== "number" || !Number.isFinite(factor))
+    return null;
+  return {
+    name: color["name"],
+    r: Math.min(255, Math.round(color["r"] * factor)),
+    g: Math.min(255, Math.round(color["g"] * factor)),
+    b: Math.min(255, Math.round(color["b"] * factor)),
+  };
 }
 
 export function addToPalette(palette, color) {
-  // Your code here
+  if (!Array.isArray(palette)) return [color];
+  if (!color) return [...palette];
+  return [...palette, color];
 }
 
 export function removeFromPalette(palette, colorName) {
-  // Your code here
+  if (!Array.isArray(palette)) return [];
+  let index = palette.findIndex((c) => c.name === colorName);
+  return index === -1
+    ? [...palette]
+    : [...palette.slice(0, index), ...palette.slice(index + 1)];
 }
 
 export function mergePalettes(palette1, palette2) {
-  // Your code here
+  if (!Array.isArray(palette1)) palette1 = [];
+  if (!Array.isArray(palette2)) palette2 = [];
+  let filterTracker = {};
+  return [...palette1, ...palette2].filter((e) => {
+    if (filterTracker[e.name]) return false;
+    filterTracker[e.name] = true;
+    return true;
+  });
 }

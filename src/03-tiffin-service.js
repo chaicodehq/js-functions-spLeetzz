@@ -40,13 +40,69 @@
  *   // => { totalCustomers: 3, totalRevenue: 7200, mealBreakdown: { veg: 2, nonveg: 1 } }
  */
 export function createTiffinPlan({ name, mealType = "veg", days = 30 } = {}) {
-  // Your code here
+  if (
+    typeof name === "string" &&
+    name.length > 0 &&
+    typeof mealType === "string" &&
+    ["veg", "nonveg", "jain"].includes(mealType.toLowerCase()) &&
+    typeof days === "number" &&
+    Number.isInteger(days) &&
+    days > 0
+  ) {
+    let dailyRate;
+    if (mealType.toLowerCase() === "veg") dailyRate = 80;
+    else if (mealType.toLowerCase() === "nonveg") dailyRate = 120;
+    else if (mealType.toLowerCase() === "jain") dailyRate = 90;
+
+    return {
+      name,
+      mealType: mealType.toLowerCase(),
+      days,
+      dailyRate,
+      totalCost: dailyRate * days,
+    };
+  } else return null;
 }
 
 export function combinePlans(...plans) {
-  // Your code here
+  let arr = [];
+
+  if (plans.length == 0) return null;
+
+  for (const plan of plans) {
+    arr.push(createTiffinPlan(plan));
+  }
+  let totalCustomers = plans.length;
+  let totalRevenue = arr.reduce((acc, curr) => acc + curr.totalCost, 0);
+  let mealBreakdown = {
+    veg: arr.reduce(
+      (acc, curr) => (curr.mealType === "veg" ? acc + 1 : acc),
+      0,
+    ),
+    nonveg: arr.reduce(
+      (acc, curr) => (curr.mealType === "nonveg" ? acc + 1 : acc),
+      0,
+    ),
+    jain: arr.reduce(
+      (acc, curr) => (curr.mealType === "jain" ? acc + 1 : acc),
+      0,
+    ),
+  };
+
+  return { totalCustomers, totalRevenue, mealBreakdown };
 }
 
 export function applyAddons(plan, ...addons) {
-  // Your code here
+  if (!plan) return null;
+  let dailyRate =
+    plan.dailyRate + addons.reduce((acc, curr) => acc + (curr.price ?? 0), 0);
+  let final = {
+    name: plan.name,
+    mealType: plan.mealType,
+    days: plan.days,
+    dailyRate,
+    totalCost: plan.days * dailyRate,
+  };
+  if (addons.length > 0) final["addonNames"] = addons.map((e) => e.name);
+  return final;
 }
